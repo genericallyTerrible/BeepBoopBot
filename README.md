@@ -1,6 +1,6 @@
 BeepBoopBot
 ===========
-A Discord bot WIP
+A Discord bot coded using Discord.NET 1.0.0-rc
 
 Design based on Foxbot's [DiscordExampleBot](https://github.com/foxbot/DiscordExampleBot)
 
