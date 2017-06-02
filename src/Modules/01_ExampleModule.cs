@@ -9,12 +9,24 @@ namespace BeepBoopBot.Modules
     [MinPermissions(AccessLevel.User)]
     public class ExampleModule : ModuleBase<SocketCommandContext>
     {
-        [Command("say"), Alias("s")]
+
+        [Command("test")]
+        [Remarks("See if the bot's still working")]
+        [MinPermissions(AccessLevel.ServerAdmin)]
+        public async Task Say()
+        {
+            SocketGuildUser user = Context.User as SocketGuildUser;
+            await ReplyAsync($"Don't worry {user.Mention}, I'm still working.");
+        }
+
+        [Command("say")]
+        [Alias("s")]
         [Remarks("Make the bot say something")]
         [MinPermissions(AccessLevel.ServerAdmin)]
         public async Task Say([Remainder]string text)
         {
-            await ReplyAsync(text);
+            SocketGuildUser user = Context.User as SocketGuildUser;
+            await ReplyAsync($"{user.Mention} wanted me to say \"{text}\".");
         }
 
         [Group("set"), Name("Example")]
@@ -22,8 +34,9 @@ namespace BeepBoopBot.Modules
         {
 
             [Command("nick")]
-            [Remarks("Makes the bot change the user's nickname")]
+            [Remarks("I change the nickname of whoever you mentioned to whatever you wanted")]
             [MinPermissions(AccessLevel.ServerAdmin)]
+            [Priority(1)]
             public async Task Nick(SocketGuildUser user, [Remainder] string name)
             {
                 SocketGuildUser admin = Context.User as SocketGuildUser;
@@ -32,7 +45,8 @@ namespace BeepBoopBot.Modules
             }
 
             [Command("nick")]
-            [Remarks("Makes the bot change the user's nickname")]
+            [Remarks("Lets me change your nickname to whatever you want.")]
+            [Priority(0)]
             public async Task Nick([Remainder]string name)
             {
                 SocketGuildUser user = Context.User as SocketGuildUser;

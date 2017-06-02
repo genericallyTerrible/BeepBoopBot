@@ -64,17 +64,21 @@ namespace BeepBoopBot.Modules
                 Description = $"Here are some commands like `{command}`"
             };
 
+            //List<CommandMatch> res = result.Commands.ToList();
+
             foreach (CommandMatch match in result.Commands)
             {
-                CommandInfo cmd = match.Command;
-                cmd.Parameters.Select(p => p.Summary);
+                CommandInfo cmdMatch = match.Command;
+
+                
+
                 embedBuilder.AddField(async x =>
                 {
-                    x.Name = await CommandDescriptionBuilder(cmd, "");
-                    x.Value = $"Aliases: {string.Join(", ", cmd.Aliases)}\n" +
-                              $"Parameters: {string.Join(", ", cmd.Parameters.Select(p => p.Name))}\n" +
-                              $"Remarks: {cmd.Remarks}\n" +
-                              $"Summary: {cmd.Summary}";
+                    x.Name = await CommandDescriptionBuilder(cmdMatch, "");
+                    x.Value = $"Aliases: {string.Join(", ", cmdMatch.Aliases)}\n" +
+                              $"Parameters: {string.Join(", ", cmdMatch.Parameters.Select(p => p.Name))}\n" +
+                              $"Remarks: {cmdMatch.Remarks}\n" +
+                              $"Summary: {cmdMatch.Summary}";
                     x.IsInline = false;
                 });
             }
@@ -173,6 +177,7 @@ namespace BeepBoopBot.Modules
             return new Tuple<string, List<EmbedFieldBuilder>>(descriptionBuilder.ToString(), submoduleFieldBuilder);
         }
 
+        /// <summary> If the user has access to the command, build a string representation of it </summary>
         private async Task<string> CommandDescriptionBuilder(CommandInfo command, string prefix)
         {
             StringBuilder descriptionBuilder = new StringBuilder();

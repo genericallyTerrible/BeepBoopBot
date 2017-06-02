@@ -43,13 +43,12 @@ namespace BeepBoopBot
                 {
                     IResult result = await _cmds.ExecuteAsync(context, argPos);
                     if (!result.IsSuccess)                                // If execution failed, reply with the error message.
-                        await context.Channel.SendMessageAsync($"Oops, I hit a snag: {result.ErrorReason}\n");
+                        await context.Channel.SendMessageAsync($"Oops, I hit a snag: {result.ErrorReason}");
                 }
                 catch (Exception e)
                 {
-                    await context.Channel.SendMessageAsync($"Uh oh, something went wrong\n{e.ToString()}");
+                    await context.Channel.SendMessageAsync($"Uh oh, something went wrong. . .\n{e.ToString()}");
                 }
-
             }
         }
     }

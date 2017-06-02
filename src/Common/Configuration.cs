@@ -61,13 +61,15 @@ namespace BeepBoopBot
                 ObservableOwners.CollectionChanged += Owners_CollectionChanged;
                 return ObservableOwners;
             }
-            set => owners = value.Select(i => i.ToString()).ToList();
+            protected set => owners = value.Select(i => i.ToString()).ToList();
             //set => new HashSet<double>(value.Select(i => (double)i).ToArray());
         }
 
+        [JsonIgnore]
+        public static Color DefaultEmbedColor = new Color(114, 137, 218);
         /// <summary> The integer value of a hex color. Used only for Json serialization. </summary>
         [JsonProperty(PropertyName = "EmbedColor")]
-        private uint embedColor = new Color(114, 137, 218).RawValue;
+        private uint embedColor = DefaultEmbedColor.RawValue;
         /// <summary> The default color to be used when embedding. </summary>
         [JsonIgnore]
         public Color EmbedColor
@@ -86,8 +88,6 @@ namespace BeepBoopBot
         private static readonly string ErrorMessage = "Sorry, I didn't quite catch that.";
 
         #endregion
-
-
 
         #region Methods
 
@@ -402,7 +402,7 @@ namespace BeepBoopBot
         public static string ListConfiguration(Configuration config)
         {
             StringBuilder sb = new StringBuilder();
-
+            
             sb.AppendLine("My current token is:\n" + config.Token);
 
             sb.AppendLine("My current prefix is:\n" + config.Prefix);
