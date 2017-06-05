@@ -5,17 +5,36 @@ using System.Threading.Tasks;
 
 namespace BeepBoopBot.Modules
 {
-    [Name("Moderator")]
+    [Name("Moderation")]
     [RequireContext(ContextType.Guild)]
-    [MinPermissions(AccessLevel.ServerMod)]
     public class ModeratorModule : ModuleBase<SocketCommandContext>
     {
         [Command("kick")]
-        [Remarks("Kick the specified user.")]
+        [Summary("Kick the specified user.")]
+        [RequireUserPermission(Discord.GuildPermission.KickMembers)]
+        [RequireBotPermission(Discord.GuildPermission.KickMembers)]
         public async Task Kick([Remainder]SocketGuildUser user)
         {
-            await user.KickAsync();                         // Attempt to kick before sending message
-            await ReplyAsync($"cya {user.Mention} :wave:"); // If an error occurs in kicking, no awkward waves
+            SocketGuildUser moderator = Context.User as SocketGuildUser;
+            if (moderator.Hierarchy > user.Hierarchy)
+            {
+
+                try
+                {
+                    await user.KickAsync();                         // Attempt to kick before sending message
+                    await ReplyAsync($"cya {user.Mention} :wave:"); // If an error occurs in kicking, no awkward waves
+                }
+                catch
+                {
+                    await ReplyAsync($"Whoops, I couldn't kick {user.Mention}");
+                }
+            }
+            else
+            {
+                await ReplyAsync($"Sorry, you can't kick {user.Mention}");
+            }
         }
+
+
     }
 }

@@ -8,7 +8,7 @@ using System;
 namespace BeepBoopBot.Modules
 {
     [Name("Bot Maintenance")]
-    [MinPermissions(AccessLevel.BotOwner)]
+    [MinPermissions(BotAccessLevel.BotOwner)]
     public class MaintenanceModule : ModuleBase<SocketCommandContext>
     {
         [Command("config")]
@@ -51,7 +51,7 @@ namespace BeepBoopBot.Modules
             await ReplyAsync("", false, settingsBuilder.Build());
         }
 
-        [MinPermissions(AccessLevel.BotMaster)]
+        [MinPermissions(BotAccessLevel.BotMaster)]
         [Group("add"), Name("Bot Maintenance")]
         public class Add : ModuleBase
         {
@@ -84,7 +84,7 @@ namespace BeepBoopBot.Modules
             }
         }
 
-        [MinPermissions(AccessLevel.BotMaster)]
+        [MinPermissions(BotAccessLevel.BotMaster)]
         [Group("remove"), Name("Bot Maintenance")]
         public class Remove : ModuleBase
         {

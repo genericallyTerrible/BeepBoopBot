@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using BeepBoopBot.Preconditions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 namespace BeepBoopBot.Modules
 {
     [Name("Help Commands")]
+    [MinPermissions(BotAccessLevel.User)]
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
         private CommandService _service;
@@ -70,17 +72,24 @@ namespace BeepBoopBot.Modules
             {
                 CommandInfo cmdMatch = match.Command;
 
-                
-
-                embedBuilder.AddField(async x =>
+                string name = await CommandDescriptionBuilder(cmdMatch, prefix);
+                if (name?.Count() > 0)
                 {
-                    x.Name = await CommandDescriptionBuilder(cmdMatch, "");
-                    x.Value = $"Aliases: {string.Join(", ", cmdMatch.Aliases)}\n" +
-                              $"Parameters: {string.Join(", ", cmdMatch.Parameters.Select(p => p.Name))}\n" +
-                              $"Remarks: {cmdMatch.Remarks}\n" +
-                              $"Summary: {cmdMatch.Summary}";
-                    x.IsInline = false;
-                });
+
+                    embedBuilder.AddField(field =>
+                    {
+                        field.Name = name;
+
+                        field.Value = (
+                        (cmdMatch.Aliases?   .Count() > 0 ? ($"Aliases: {   string.Join(", ", cmdMatch.Aliases)   }\n") : ("")) +
+                        (cmdMatch.Parameters?.Count() > 0 ? ($"Parameters: {string.Join(", ", cmdMatch.Parameters)}\n") : ("")) +
+                        (cmdMatch.Summary?   .Count() > 0 ? ($"Summary: {   string.Join(", ", cmdMatch.Summary)   }\n") : ("")) +
+                        (cmdMatch.Remarks?   .Count() > 0 ? ($"Remarks: {                     cmdMatch.Remarks    }\n") : (""))
+                        .Trim());
+
+                        field.IsInline = false;
+                    });
+                }
             }
 
             await ReplyAsync("", false, embedBuilder.Build());
@@ -194,6 +203,17 @@ namespace BeepBoopBot.Modules
                         ">");
                 }
                 descriptionBuilder.AppendLine("`");
+
+                //descriptionBuilder.Append("Preconditions: ");
+                //if (command.Preconditions.Count > 0)
+                //{
+                //    descriptionBuilder.Append(string.Join(", ", command.Preconditions.Select(p => p.ToString())));
+                //}
+                //else
+                //{
+                //    descriptionBuilder.Append("None");
+                //}
+                //descriptionBuilder.AppendLine();
             }
 
             return descriptionBuilder.ToString();

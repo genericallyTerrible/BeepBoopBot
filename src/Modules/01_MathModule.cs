@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 namespace BeepBoopBot.Modules
 {
     [Name("Math")]
+    [MinPermissions(BotAccessLevel.User)]
     public class MathModule : ModuleBase<SocketCommandContext>
     {
         [Command("isinteger")]
         [Remarks("Check if the input text is a whole number.")]
-        [MinPermissions(AccessLevel.User)]
         public async Task IsInteger(int number)
         {
             await ReplyAsync($"The text {number} is a number!");
@@ -18,7 +18,6 @@ namespace BeepBoopBot.Modules
 
         [Command("multiply")]
         [Remarks("Get the product of two numbers.")]
-        [MinPermissions(AccessLevel.User)]
         public async Task Multiply(int a, int b)
         {
             int product = a * b;
@@ -27,7 +26,6 @@ namespace BeepBoopBot.Modules
 
         [Command("addmany")]
         [Remarks("Get the sum of many numbers")]
-        [MinPermissions(AccessLevel.User)]
         public async Task Addmany(params int[] numbers)
         {
             int sum = numbers.Sum();

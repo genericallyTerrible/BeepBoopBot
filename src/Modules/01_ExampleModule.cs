@@ -1,4 +1,5 @@
-﻿using Discord.Commands;
+﻿using Discord.Rest;
+using Discord.Commands;
 using Discord.WebSocket;
 using BeepBoopBot.Preconditions;
 using System.Threading.Tasks;
@@ -6,27 +7,44 @@ using System.Threading.Tasks;
 namespace BeepBoopBot.Modules
 {
     [Name("Example")]
-    [MinPermissions(AccessLevel.User)]
+    [MinPermissions(BotAccessLevel.User)]
     public class ExampleModule : ModuleBase<SocketCommandContext>
     {
 
         [Command("test")]
         [Remarks("See if the bot's still working")]
-        [MinPermissions(AccessLevel.ServerAdmin)]
-        public async Task Say()
+        [RequireUserPermission(Discord.GuildPermission.Administrator)]
+        public async Task Test()
         {
             SocketGuildUser user = Context.User as SocketGuildUser;
             await ReplyAsync($"Don't worry {user.Mention}, I'm still working.");
         }
 
         [Command("say")]
+        [RequireUserPermission(Discord.GuildPermission.Administrator)]
+        public async Task Say(SocketTextChannel textChannel, [Remainder] string message)
+        {
+            SocketUser user = Context.User;
+            await textChannel.SendMessageAsync($"{user.Mention} wanted me to say, \"{message}\"");
+        }
+
+        [Command("say")]
+        [RequireUserPermission(Discord.GuildPermission.Administrator)]
+        public async Task Say(SocketUser recipient, [Remainder] string message)
+        {
+            SocketUser sender = Context.User;
+            RestDMChannel dm = await recipient.CreateDMChannelAsync();
+            await dm.SendMessageAsync($"{sender.Mention} wanted me to say, \"{message}\"");
+        }
+
+        [Command("say")]
         [Alias("s")]
         [Remarks("Make the bot say something")]
-        [MinPermissions(AccessLevel.ServerAdmin)]
-        public async Task Say([Remainder]string text)
+        [RequireUserPermission(Discord.GuildPermission.Administrator)]
+        public async Task Say([Remainder]string message)
         {
-            SocketGuildUser user = Context.User as SocketGuildUser;
-            await ReplyAsync($"{user.Mention} wanted me to say \"{text}\".");
+            SocketUser user = Context.User;
+            await ReplyAsync($"{user.Mention} wanted me to say \"{message}\"");
         }
 
         [Group("set"), Name("Example")]
@@ -35,7 +53,8 @@ namespace BeepBoopBot.Modules
 
             [Command("nick")]
             [Remarks("I change the nickname of whoever you mentioned to whatever you wanted")]
-            [MinPermissions(AccessLevel.ServerAdmin)]
+            [RequireUserPermission(Discord.GuildPermission.ManageNicknames)]
+            [RequireBotPermission(Discord.GuildPermission.ManageNicknames)]
             [Priority(1)]
             public async Task Nick(SocketGuildUser user, [Remainder] string name)
             {
@@ -56,7 +75,8 @@ namespace BeepBoopBot.Modules
 
             [Command("botnick")]
             [Remarks("Changes the bot's nickname")]
-            [MinPermissions(AccessLevel.ServerOwner)]
+            [MinPermissions(BotAccessLevel.BotOwner)]
+            [RequireContext(ContextType.Guild)]
             public async Task BotNick([Remainder]string name)
             {
                 Discord.IGuildUser self = await Context.Guild.GetCurrentUserAsync();
@@ -69,7 +89,7 @@ namespace BeepBoopBot.Modules
             public class Me : ModuleBase
             {
                 [Command("trash")]
-                [MinPermissions(AccessLevel.BotMaster)]
+                [MinPermissions(BotAccessLevel.BotMaster)]
                 public async Task Trash()
                 {
 
