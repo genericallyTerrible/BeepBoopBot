@@ -13,47 +13,80 @@ namespace BeepBoopBot.Preconditions
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
     public class MinPermissionsAttribute : PreconditionAttribute
     {
+        private ServerAccessLevel serverLevel;
         private BotAccessLevel botLevel;
+        private RequiredPreconditions requiredPreconditions;
 
-        //public MinPermissionsAttribute(ServerAccessLevel level)
-        //{
-        //    serverLevel = level;
-        //}
-
-        public MinPermissionsAttribute(BotAccessLevel level)
+        public MinPermissionsAttribute(ServerAccessLevel sLevel)
         {
-            botLevel = level;
+            serverLevel = sLevel;
+            requiredPreconditions = RequiredPreconditions.RequireAllPreconditions;
         }
+
+        public MinPermissionsAttribute(BotAccessLevel bLevel)
+        {
+            botLevel = bLevel;
+            requiredPreconditions = RequiredPreconditions.RequireAllPreconditions;
+        }
+
+        public MinPermissionsAttribute(ServerAccessLevel sLevel, BotAccessLevel bLevel)
+        {
+            serverLevel = sLevel;
+            botLevel = bLevel;
+            requiredPreconditions = RequiredPreconditions.RequireAllPreconditions;
+        }
+
+        public MinPermissionsAttribute(ServerAccessLevel sLevel, BotAccessLevel bLevel, RequiredPreconditions rPreconditions)
+        {
+            serverLevel = sLevel;
+            botLevel = bLevel;
+            requiredPreconditions = rPreconditions;
+        }
+
 
         public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
-            //ServerAccessLevel serverAccess = GetServerPermission(context);            // Get the acccesslevel for this context
+            ServerAccessLevel serverAccess = GetServerPermission(context);            // Get the acccesslevel for this context
             BotAccessLevel botAccess = GetBotPermission(context);        //Personal override for now. Remove in release versions.
-            if ((/*serverAccess >= serverLevel &&*/ botAccess >= botLevel))// || botAccess == BotAccessLevel.BotMaster)          // If the user's access level is greater than the required level, return success.
-                return Task.FromResult(PreconditionResult.FromSuccess());
+            if (requiredPreconditions == RequiredPreconditions.RequireAllPreconditions)
+            {
+                if ((serverAccess >= serverLevel && botAccess >= botLevel))// || botAccess == BotAccessLevel.BotMaster)          // If the user's access level is greater than the required level, return success.
+                    return Task.FromResult(PreconditionResult.FromSuccess());
+                else
+                    return Task.FromResult(PreconditionResult.FromError("Insufficient permissions."));
+            }
+            else if(requiredPreconditions == RequiredPreconditions.RequireAnyPrecondition)
+            {
+                if ((serverAccess >= serverLevel || botAccess >= botLevel))
+                    return Task.FromResult(PreconditionResult.FromSuccess());
+                else
+                    return Task.FromResult(PreconditionResult.FromError("Insufficient permissions."));
+            }
             else
+            {
                 return Task.FromResult(PreconditionResult.FromError("Insufficient permissions."));
+            }
         }
 
-        //public ServerAccessLevel GetServerPermission(ICommandContext c)
-        //{
-        //    // Check if the context is in a guild.
-        //    if (c.User is SocketGuildUser user)
-        //    {
-        //        if (c.Guild.OwnerId == user.Id)                  // Check if the user is the guild owner.
-        //            return ServerAccessLevel.ServerOwner;
+        public ServerAccessLevel GetServerPermission(ICommandContext c)
+        {
+            // Check if the context is in a guild.
+            if (c.User is SocketGuildUser user)
+            {
+                if (c.Guild.OwnerId == user.Id)                  // Check if the user is the guild owner.
+                    return ServerAccessLevel.ServerOwner;
 
-        //        if (user.GuildPermissions.Administrator)         // Check if the user has the administrator permission.
-        //            return ServerAccessLevel.ServerAdmin;
+                if (user.GuildPermissions.Administrator)         // Check if the user has the administrator permission.
+                    return ServerAccessLevel.ServerAdmin;
 
-        //        if (user.GuildPermissions.ManageMessages ||      // Check if the user can ban, kick, or manage messages.
-        //            user.GuildPermissions.BanMembers ||
-        //            user.GuildPermissions.KickMembers)
-        //            return ServerAccessLevel.ServerMod;
-        //    }
+                if (user.GuildPermissions.ManageMessages ||      // Check if the user can ban, kick, or manage messages.
+                    user.GuildPermissions.BanMembers ||
+                    user.GuildPermissions.KickMembers)
+                    return ServerAccessLevel.ServerMod;
+            }
 
-        //    return ServerAccessLevel.User;                             // If nothing else, return a default permission.
-        //}
+            return ServerAccessLevel.User;                             // If nothing else, return a default permission.
+        }
 
         public BotAccessLevel GetBotPermission(ICommandContext c)
         {

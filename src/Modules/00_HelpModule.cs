@@ -53,46 +53,45 @@ namespace BeepBoopBot.Modules
         {
             SearchResult result = _service.Search(Context, command);
 
-            if (!result.IsSuccess)
+            if (result.IsSuccess)
             {
-                await ReplyAsync($"Sorry, I couldn't find a command like `{command}`.");
-                return;
-            }
-
-            string prefix = Configuration.Load().Prefix;
-            EmbedBuilder embedBuilder = new EmbedBuilder()
-            {
-                Color = Configuration.Load().EmbedColor,
-                Description = $"Here are some commands like `{command}`"
-            };
-
-            //List<CommandMatch> res = result.Commands.ToList();
-
-            foreach (CommandMatch match in result.Commands)
-            {
-                CommandInfo cmdMatch = match.Command;
-
-                string name = await CommandDescriptionBuilder(cmdMatch, prefix);
-                if (name?.Count() > 0)
+                string prefix = Configuration.Load().Prefix;
+                EmbedBuilder embedBuilder = new EmbedBuilder()
                 {
+                    Color = Configuration.Load().EmbedColor,
+                    Description = $"Here are some commands like `{command}`"
+                };
 
-                    embedBuilder.AddField(field =>
+                foreach (CommandMatch match in result.Commands)
+                {
+                    CommandInfo cmdMatch = match.Command;
+
+                    string name = await CommandDescriptionBuilder(cmdMatch, prefix);
+                    if (name?.Count() > 0)
                     {
-                        field.Name = name;
 
-                        field.Value = (
-                        (cmdMatch.Aliases?   .Count() > 0 ? ($"Aliases: {   string.Join(", ", cmdMatch.Aliases)   }\n") : ("")) +
-                        (cmdMatch.Parameters?.Count() > 0 ? ($"Parameters: {string.Join(", ", cmdMatch.Parameters)}\n") : ("")) +
-                        (cmdMatch.Summary?   .Count() > 0 ? ($"Summary: {   string.Join(", ", cmdMatch.Summary)   }\n") : ("")) +
-                        (cmdMatch.Remarks?   .Count() > 0 ? ($"Remarks: {                     cmdMatch.Remarks    }\n") : (""))
-                        .Trim());
+                        embedBuilder.AddField(field =>
+                        {
+                            field.Name = name;
 
-                        field.IsInline = false;
-                    });
+                            field.Value = (
+                            (cmdMatch.Aliases?   .Count() > 0 ? ($"Aliases: {   string.Join(", ", cmdMatch.Aliases)   }\n") : ("")) +
+                            (cmdMatch.Parameters?.Count() > 0 ? ($"Parameters: {string.Join(", ", cmdMatch.Parameters)}\n") : ("")) +
+                            (cmdMatch.Summary?   .Count() > 0 ? ($"Summary: {   string.Join(", ", cmdMatch.Summary)   }\n") : ("")) +
+                            (cmdMatch.Remarks?   .Count() > 0 ? ($"Remarks: {                     cmdMatch.Remarks    }\n") : (""))
+                            .Trim());
+
+                            field.IsInline = false;
+                        });
+                    }
+                }
+                if (embedBuilder.Fields.Count > 0)
+                {
+                    await ReplyAsync("", false, embedBuilder.Build());
+                    return;
                 }
             }
-
-            await ReplyAsync("", false, embedBuilder.Build());
+            await ReplyAsync($"Sorry, I couldn't find a command like `{command}`.");
         }
 
         /// <summary>

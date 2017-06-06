@@ -13,7 +13,7 @@ namespace BeepBoopBot.Modules
 
         [Command("test")]
         [Remarks("See if the bot's still working")]
-        [RequireUserPermission(Discord.GuildPermission.Administrator)]
+        [MinPermissions(ServerAccessLevel.ServerAdmin, BotAccessLevel.BotOwner, RequiredPreconditions.RequireAnyPrecondition)]
         public async Task Test()
         {
             SocketGuildUser user = Context.User as SocketGuildUser;
@@ -21,7 +21,7 @@ namespace BeepBoopBot.Modules
         }
 
         [Command("say")]
-        [RequireUserPermission(Discord.GuildPermission.Administrator)]
+        [MinPermissions(ServerAccessLevel.ServerAdmin, BotAccessLevel.BotOwner, RequiredPreconditions.RequireAnyPrecondition)]
         public async Task Say(SocketTextChannel textChannel, [Remainder] string message)
         {
             SocketUser user = Context.User;
@@ -29,7 +29,7 @@ namespace BeepBoopBot.Modules
         }
 
         [Command("say")]
-        [RequireUserPermission(Discord.GuildPermission.Administrator)]
+        [MinPermissions(ServerAccessLevel.ServerAdmin, BotAccessLevel.BotOwner, RequiredPreconditions.RequireAnyPrecondition)]
         public async Task Say(SocketUser recipient, [Remainder] string message)
         {
             SocketUser sender = Context.User;
@@ -40,7 +40,7 @@ namespace BeepBoopBot.Modules
         [Command("say")]
         [Alias("s")]
         [Remarks("Make the bot say something")]
-        [RequireUserPermission(Discord.GuildPermission.Administrator)]
+        [MinPermissions(ServerAccessLevel.ServerAdmin, BotAccessLevel.BotOwner, RequiredPreconditions.RequireAnyPrecondition)]
         public async Task Say([Remainder]string message)
         {
             SocketUser user = Context.User;
@@ -65,6 +65,7 @@ namespace BeepBoopBot.Modules
 
             [Command("nick")]
             [Remarks("Lets me change your nickname to whatever you want.")]
+            [RequireBotPermission(Discord.GuildPermission.ManageNicknames)]
             [Priority(0)]
             public async Task Nick([Remainder]string name)
             {
@@ -86,6 +87,7 @@ namespace BeepBoopBot.Modules
             }
 
             [Group("me"), Name("Example")]
+            [MinPermissions(BotAccessLevel.BotMaster)]
             public class Me : ModuleBase
             {
                 [Command("trash")]

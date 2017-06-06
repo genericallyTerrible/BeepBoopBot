@@ -4,14 +4,12 @@
     /// The enum used to specify permission levels. A lower
     /// number means less permissions than a higher number.
     /// </summary>
-    public enum SeverAccessLevel
+    public enum ServerAccessLevel
     {
         Blocked,
         User,
         ServerMod,
         ServerAdmin,
-        ServerOwner,
-        BotOwner,
-        BotMaster
+        ServerOwner
     }
 }
