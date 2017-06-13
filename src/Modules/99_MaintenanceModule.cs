@@ -9,7 +9,7 @@ namespace BeepBoopBot.Modules
 {
     [Name("Bot Maintenance")]
     [MinPermissions(BotAccessLevel.BotOwner)]
-    public class MaintenanceModule : ModuleBase<SocketCommandContext>
+    public class MaintenanceModule : ModuleBase<ShardedCommandContext>
     {
         [Command("config")]
         [Remarks("Lists the bot's current configuration")]
@@ -118,7 +118,15 @@ namespace BeepBoopBot.Modules
         {
             [Command("color")]
             [Remarks("")]
-            public async Task ModifyColor(int r, int g, int b)
+            public async Task ModifyColor
+            (
+            [Summary("Integer value of the red component of the new color.")]
+            int r,
+            [Summary("Integer value of the green component of the new color.")]
+            int g,
+            [Summary("Integer value of the blue component of the new color.")]
+            int b
+            )
             {
                 Configuration config = Configuration.Load();
                 config.EmbedColor = new Color(r, g, b);
@@ -135,23 +143,26 @@ namespace BeepBoopBot.Modules
 
             [Command("color")]
             [Remarks("")]
-            public async Task ModifyColor([Remainder]string colorHex)
+            public async Task ModifyColor
+                (
+                [Summary("The hex code of the new color."), Remainder]string hexColor
+                )
             {
                 Configuration config = Configuration.Load();
                 bool success = false;
 
-                if (colorHex[0] == '#') //Trim hastags if necessary
-                    colorHex = colorHex.Substring(1);
+                if (hexColor[0] == '#') //Trim hastags if necessary
+                    hexColor = hexColor.Substring(1);
 
-                if (colorHex.ToLower().Equals("default"))
+                if (hexColor.ToLower().Equals("default"))
                 {
                     config.EmbedColor = Configuration.DefaultEmbedColor;
                     config.SaveJson();
                     success = true;
                 }
-                else if (colorHex.Length < 7)
+                else if (hexColor.Length < 7)
                 {
-                    uint newVal = uint.Parse(colorHex, System.Globalization.NumberStyles.HexNumber);
+                    uint newVal = uint.Parse(hexColor, System.Globalization.NumberStyles.HexNumber);
                     if (newVal <= new Color(255, 255, 255).RawValue)
                     {
                         config.EmbedColor = new Color(newVal);

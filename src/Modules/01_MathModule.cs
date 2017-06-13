@@ -7,7 +7,7 @@ namespace BeepBoopBot.Modules
 {
     [Name("Math")]
     [MinPermissions(BotAccessLevel.User)]
-    public class MathModule : ModuleBase<SocketCommandContext>
+    public class MathModule : ModuleBase<ShardedCommandContext>
     {
         [Command("isinteger")]
         [Remarks("Check if the input text is a whole number.")]

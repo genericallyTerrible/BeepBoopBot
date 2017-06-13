@@ -25,12 +25,22 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <EmbeddedResource Update="Resources\CommandStrings.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Resources\ResponseStrings.resx">
+      <Generator></Generator>
+    </EmbeddedResource>
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="DataStructures\" />
   </ItemGroup>
 
 </Project>

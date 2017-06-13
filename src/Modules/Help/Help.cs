@@ -1,17 +1,18 @@
 ﻿using Discord;
 using Discord.Commands;
 using BeepBoopBot.Preconditions;
+using BeepBoopBot.Attributes;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace BeepBoopBot.Modules
+namespace BeepBoopBot.Modules.Help
 {
     [Name("Help Commands")]
     [MinPermissions(BotAccessLevel.User)]
-    public class HelpModule : ModuleBase<SocketCommandContext>
+    public class HelpModule : ModuleBase<ShardedCommandContext>
     {
         private CommandService _service;
 
@@ -20,9 +21,8 @@ namespace BeepBoopBot.Modules
             _service = service;
         }
 
-        [Command("help")]
-        [Alias("halp", "helpme")]
-        public async Task HelpAsync()
+        [BotCommand, Usage, Description, Aliases]
+        public async Task Help()
         {
             string prefix = Configuration.Load().Prefix;
             EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -44,18 +44,23 @@ namespace BeepBoopBot.Modules
             await ReplyAsync("", false, embedBuilder.Build());
         }
 
-        [Command("help")]
-        [Alias("halp", "helpme")]
-        public async Task HelpAsync(
-            [Summary("The command you want help on"),Remainder]
-            string command
-            )
+        [BotCommand, Description, Aliases]
+        public async Task HelpWith
+        (
+        [Summary("The command you want help on."),Remainder]
+        string command
+        )
         {
+            string prefix = Configuration.Load().Prefix;
+            if (command.Substring(0, prefix.Length).Equals(prefix))
+            {
+                //Trim the prefix if present
+                command = command.Substring(prefix.Length);
+            }
             SearchResult result = _service.Search(Context, command);
 
             if (result.IsSuccess)
             {
-                string prefix = Configuration.Load().Prefix;
                 EmbedBuilder embedBuilder = new EmbedBuilder()
                 {
                     Color = Configuration.Load().EmbedColor,
@@ -66,23 +71,24 @@ namespace BeepBoopBot.Modules
                 {
                     CommandInfo cmdMatch = match.Command;
 
-                    string name = await CommandDescriptionBuilder(cmdMatch, prefix);
-                    if (name?.Count() > 0)
+                    string fieldName = await CommandDescriptionBuilder(cmdMatch, prefix);
+                    if (fieldName?.Count() > 0)
                     {
-
+                        string parameters = await CommandParameterBuilder(cmdMatch);
                         embedBuilder.AddField(field =>
                         {
-                            field.Name = name;
+                            field.Name = fieldName;
 
                             field.Value = (
-                            (cmdMatch.Aliases?   .Count() > 0 ? ($"Aliases: {   string.Join(", ", cmdMatch.Aliases)   }\n") : ("")) +
-                            (cmdMatch.Parameters?.Count() > 0 ? ($"Parameters: {string.Join(", ", cmdMatch.Parameters)}\n") : ("")) +
-                            (cmdMatch.Summary?   .Count() > 0 ? ($"Summary: {   string.Join(", ", cmdMatch.Summary)   }\n") : ("")) +
-                            (cmdMatch.Remarks?   .Count() > 0 ? ($"Remarks: {                     cmdMatch.Remarks    }\n") : (""))
+                            (cmdMatch.Aliases?.Count() > 0 ? ($"**Aliases**\n\t{   string.Join(", ", cmdMatch.Aliases)}\n") : ("")) +
+                            (cmdMatch.Parameters?.Count() > 0 ? ($"**Parameters**\n\t{                  parameters       }\n") : ("")) +
+                            (cmdMatch.Summary?.Count() > 0 ? ($"**Summary**\n\t{   string.Join(", ", cmdMatch.Summary)}\n") : ("")) +
+                            (cmdMatch.Remarks?.Count() > 0 ? ($"**Usage**\n\t{                       cmdMatch.Remarks }\n") : (""))  
                             .Trim());
 
                             field.IsInline = false;
                         });
+                        //embedBuilder.AddField(fb => fb.WithName(GetText("usage")).WithValue(string.Format(com.Remarks, com.Module.Aliases.First())).WithIsInline(false));
                     }
                 }
                 if (embedBuilder.Fields.Count > 0)
@@ -166,7 +172,11 @@ namespace BeepBoopBot.Modules
             // Iterate over commands directly contained by this module
             foreach (CommandInfo command in module.Commands)
             {
-                descriptionBuilder.Append(await CommandDescriptionBuilder(command, prefix));
+                string cmdDesc = await CommandDescriptionBuilder(command, prefix);
+                if (!string.IsNullOrWhiteSpace(cmdDesc))
+                {
+                    descriptionBuilder.Append(cmdDesc);
+                }
             }
             // If a submodule has the same name as its parrent, treat its commands as if they were in the parent module
             foreach (ModuleInfo submodule in module.Submodules.Where(sub => sub.Name.Equals(module.Name)))
@@ -202,20 +212,23 @@ namespace BeepBoopBot.Modules
                         ">");
                 }
                 descriptionBuilder.AppendLine("`");
-
-                //descriptionBuilder.Append("Preconditions: ");
-                //if (command.Preconditions.Count > 0)
-                //{
-                //    descriptionBuilder.Append(string.Join(", ", command.Preconditions.Select(p => p.ToString())));
-                //}
-                //else
-                //{
-                //    descriptionBuilder.Append("None");
-                //}
-                //descriptionBuilder.AppendLine();
             }
 
             return descriptionBuilder.ToString();
+        }
+
+        private async Task<string> CommandParameterBuilder(CommandInfo command)
+        {
+            StringBuilder paramBuilder = new StringBuilder();
+            PreconditionResult result = await command.CheckPreconditionsAsync(Context);
+            if (result.IsSuccess)
+            {
+                foreach (ParameterInfo parameter in command.Parameters)
+                {
+                    paramBuilder.Append($"{parameter.Name}: {parameter.Summary}\n\t");
+                }
+            }
+            return paramBuilder.ToString().Trim();
         }
     }
 }

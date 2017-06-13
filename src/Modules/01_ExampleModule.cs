@@ -8,7 +8,7 @@ namespace BeepBoopBot.Modules
 {
     [Name("Example")]
     [MinPermissions(BotAccessLevel.User)]
-    public class ExampleModule : ModuleBase<SocketCommandContext>
+    public class ExampleModule : ModuleBase<ShardedCommandContext>
     {
 
         [Command("test")]
@@ -16,7 +16,7 @@ namespace BeepBoopBot.Modules
         [MinPermissions(ServerAccessLevel.ServerAdmin, BotAccessLevel.BotOwner, RequiredPreconditions.RequireAnyPrecondition)]
         public async Task Test()
         {
-            SocketGuildUser user = Context.User as SocketGuildUser;
+            SocketUser user = Context.User;
             await ReplyAsync($"Don't worry {user.Mention}, I'm still working.");
         }
 
@@ -48,6 +48,7 @@ namespace BeepBoopBot.Modules
         }
 
         [Group("set"), Name("Example")]
+        [RequireContext(ContextType.Guild)]
         public class Set : ModuleBase
         {
 
@@ -77,7 +78,6 @@ namespace BeepBoopBot.Modules
             [Command("botnick")]
             [Remarks("Changes the bot's nickname")]
             [MinPermissions(BotAccessLevel.BotOwner)]
-            [RequireContext(ContextType.Guild)]
             public async Task BotNick([Remainder]string name)
             {
                 Discord.IGuildUser self = await Context.Guild.GetCurrentUserAsync();

@@ -7,7 +7,7 @@ namespace BeepBoopBot.Modules
 {
     [Name("Moderation")]
     [RequireContext(ContextType.Guild)]
-    public class ModeratorModule : ModuleBase<SocketCommandContext>
+    public class ModeratorModule : ModuleBase<ShardedCommandContext>
     {
         [Command("kick")]
         [Summary("Kick the specified user.")]
