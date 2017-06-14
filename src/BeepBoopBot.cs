@@ -15,10 +15,10 @@ namespace BeepBoopBot
         public static CommandService CommandService { get; private set; }
         public static DiscordShardedClient Client { get; private set; }
 
-        public static Localization Localization { get; protected set; }
+        public static Localization Localization { get; private set; }
 
-
-        private static int DefaultLeftPadding = 15;
+        private static readonly int DefaultLeftPadding = 15;
+        private static readonly int AutostartDelay = 5000;
 
         static BeepBoopBot()
         {
@@ -35,9 +35,30 @@ namespace BeepBoopBot
 
             Configuration.PrintConfiguration(config);
 
-
             if (!config.AutoStart)
                 config.PromptForChanges();                   // Asks the user if they want to change the bot's settings.
+
+            ConsoleCountdown countdown = new ConsoleCountdown(AutostartDelay, "Booting up in ");
+            countdown.CountdownCompleted += OnStartup;
+            countdown.CountdownCanceled += OnStartup;
+            countdown.StartCountdown();
+
+            await Task.Delay(-1);                            // Prevent the console window from closing.
+        }
+
+        private void OnStartupCountdownCompleted(object sender, EventArgs e)
+        {
+            Console.WriteLine("The countdown completed.");
+        }
+
+        private void OnStartupCountdownCanceled(object sender, EventArgs e)
+        {
+            Console.WriteLine("The countdown was canceled.");
+        }
+
+        private async void OnStartup(object sender, EventArgs e)
+        {
+            Configuration config = Configuration.Load();
 
             // Create a new instance of DiscordSocketClient.
             Client = new DiscordShardedClient(new DiscordSocketConfig
@@ -48,17 +69,13 @@ namespace BeepBoopBot
             });
 
             Client.Log += Client_Log;                        // Register the console log event.
-            //=> Console.Out.WriteLineAsync(l.ToString());
 
             await Client.LoginAsync(TokenType.Bot, config.Token);
             await Client.StartAsync();
 
             CommandHandler = new CommandHandler();           // Initialize the command handler service
             await CommandHandler.InstallAsync(Client);
-
-            await Task.Delay(-1);                            // Prevent the console window from closing.
         }
-
 
         public static Task Client_Log(string source, string message, LogSeverity severity = LogSeverity.Info)
         {
