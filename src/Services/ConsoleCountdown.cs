@@ -14,18 +14,22 @@ namespace BeepBoopBot.Services
         public bool Cancelable { get; private set; }
         public string Prompt { get; private set; }
 
+        /// <summary> Event fired every time the countdown stops for any reason. This includes timer completion and cancelation.</summary>
+        public event EventHandler CountdownStopped;
+        /// <summary> Event fired every time the countdown completes without interruption.</summary>
         public event EventHandler CountdownCompleted;
+        /// <summary> Event fired every time the countdown is canceled before the allotted time transpires.</summary>
         public event EventHandler CountdownCanceled;
 
         private string CancelablePrompt = "Press any key to continue. . .";
 
-        private static readonly string Second = " second";
-        private static readonly int maxTimeDisplayLength = (int.MaxValue / 1000).ToString().Length;
+        private static readonly string SecondStr = " second";
+        private static readonly int MaxTimeDisplayLength = (int.MaxValue / 1000).ToString().Length;
 
         private bool countdownStopped = false;
         private Timer timer;
 
-        public ConsoleCountdown(int runTime, string prompt, int interval = 1000, bool cancelable = true)
+        public ConsoleCountdown(string prompt, int runTime, int interval = 1000, bool cancelable = true)
         {
             RunTime = runTime;
             Interval = interval;
@@ -44,6 +48,11 @@ namespace BeepBoopBot.Services
             CancelablePrompt = cancelablePrompt;
 
             timer = new Timer(HandleTimer, null, Timeout.Infinite, Timeout.Infinite);
+        }
+
+        protected virtual void OnCountdownStopped(EventArgs e)
+        {
+            CountdownStopped?.Invoke(this, e);
         }
 
         protected virtual void OnCountdownCompleted(EventArgs e)
@@ -69,9 +78,12 @@ namespace BeepBoopBot.Services
 
         public void StopCountdown()
         {
+            // Clean up.
             countdownStopped = true;
             timer.Change(Timeout.Infinite, Timeout.Infinite);
             Console.WriteLine();
+            // Fire the event.
+            OnCountdownStopped(EventArgs.Empty);
         }
 
         private async void CancelOnInput()
@@ -95,18 +107,18 @@ namespace BeepBoopBot.Services
                 int remainingTime = (RunTime - ElapsedTime) / 1000;
                 string plural = remainingTime != 1 ? "s. " : ". ";
 
-                string prompt = $"\r{Prompt}{remainingTime}{Second}{plural}";
+                string prompt = $"\r{Prompt}{remainingTime}{SecondStr}{plural}";
                 int promptRealLength = 0;
                 if (Cancelable)
                 {
                     prompt += CancelablePrompt;
                     promptRealLength = prompt.Length;
-                    prompt = prompt.PadRight(Prompt.Length + maxTimeDisplayLength + Second.Length + plural.Length + CancelablePrompt.Length);
+                    prompt = prompt.PadRight(Prompt.Length + MaxTimeDisplayLength + SecondStr.Length + plural.Length + CancelablePrompt.Length);
                 }
                 else
                 {
                     promptRealLength = prompt.Length;
-                    prompt = prompt.PadRight(Prompt.Length + maxTimeDisplayLength + Second.Length + plural.Length);
+                    prompt = prompt.PadRight(Prompt.Length + MaxTimeDisplayLength + SecondStr.Length + plural.Length);
                 }
                 Console.Write(prompt);
                 // -1 for zero based indexing.

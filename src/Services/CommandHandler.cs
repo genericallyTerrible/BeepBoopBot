@@ -76,9 +76,9 @@ namespace BeepBoopBot.Services
             string[] messages = baseLog.Item2;
             string[] ids = baseLog.Item3;
 
-            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, sources, messages, ids);
+            await BeepBoopBot.Logger.LogMultiple(severity, ClassName, sources, messages, ids);
             // Log the message seperately to avoid trimming it.
-            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, new[] { "Message" }, new[] { msg.Content }, trimCenter: false);
+            await BeepBoopBot.Logger.LogMultiple(severity, ClassName, new[] { "Message" }, new[] { msg.Content }, trimCenter: false);
         }
 
         private async Task LogError(IUserMessage msg, IResult result)
@@ -91,11 +91,11 @@ namespace BeepBoopBot.Services
             string[] messages = baseLog.Item2;
             string[] ids = baseLog.Item3;
 
-            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, sources, messages, ids);
+            await BeepBoopBot.Logger.LogMultiple(severity, ClassName, sources, messages, ids);
             // Log the message seperately to avoid trimming it.
-            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, new[] { "Message" }, new[] { msg.Content }, trimCenter: false);
+            await BeepBoopBot.Logger.LogMultiple(severity, ClassName, new[] { "Message" }, new[] { msg.Content }, trimCenter: false);
             // Log the error seperatley to avoid trimming it.
-            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, new[] { "Error" }, new[] { result.ErrorReason }, trimCenter: false);
+            await BeepBoopBot.Logger.LogMultiple(severity, ClassName, new[] { "Error" }, new[] { result.ErrorReason }, trimCenter: false);
         }
 
         private async Task LogException(IUserMessage msg, Exception e)
@@ -108,11 +108,11 @@ namespace BeepBoopBot.Services
             string[] messages = baseLog.Item2;
             string[] ids      = baseLog.Item3;
             
-            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, sources, messages, ids);
+            await BeepBoopBot.Logger.LogMultiple(severity, ClassName, sources, messages, ids);
             // Log the message seperately to avoid trimming it.
-            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, new[] { "Message" }, new[] { msg.Content }, trimCenter: false);
+            await BeepBoopBot.Logger.LogMultiple(severity, ClassName, new[] { "Message" }, new[] { msg.Content }, trimCenter: false);
             // Log the error seperatley to avoid trimming it.
-            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, new[] { "Exception" }, new[] { e.Message }, trimCenter: false);
+            await BeepBoopBot.Logger.LogMultiple(severity, ClassName, new[] { "Exception" }, new[] { e.Message }, trimCenter: false);
         }
 
         private Tuple<string[], string[], string[]> BuildBaseLog(IUserMessage msg)

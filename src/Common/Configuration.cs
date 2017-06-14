@@ -108,12 +108,12 @@ namespace BeepBoopBot
         /// <summary> Used to ensure the a configuration file. </summary>
         public static void EnsureExists()
         {
-            BeepBoopBot.Client_Log(ClassName, "Loading Configuration...");
+            BeepBoopBot.Logger.Log(ClassName, "Loading Configuration...");
 
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
             if (!File.Exists(file))                                 // Check if the configuration file exists.
             {
-                BeepBoopBot.Client_Log(ClassName, "Configuration not found", LogSeverity.Warning);
+                BeepBoopBot.Logger.Log(ClassName, "Configuration not found", LogSeverity.Warning);
                 Console.WriteLine();
 
                 string path = Path.GetDirectoryName(file);          // Create config directory if doesn't exist.
@@ -130,18 +130,21 @@ namespace BeepBoopBot
                 Console.WriteLine();
             }
 
-            BeepBoopBot.Client_Log(ClassName, "Configuration Loaded");
+            BeepBoopBot.Logger.Log(ClassName, "Configuration Loaded");
         }
 
         /// <summary> Uses to console to ask the user if they want to change bot settings. </summary>
-        public void PromptForChanges()
+        public Configuration PromptForChanges()
         {
             Console.WriteLine();
             Console.WriteLine("Would you like to change my settings? (y/n): ");
             string input = Console.ReadLine().ToLower();        // Collect user input.
             if (input.Length > 0 && input[0] == 'y')            // Check if input is long enough and uesr said yes.
+            {
                 ChangeBotSettings();                            // Otherwise, assume no.
+            }
             Console.WriteLine();
+            return this;
         }
 
         /// <summary> Uses the console to allow a user to change bot settings. </summary>
@@ -468,7 +471,7 @@ namespace BeepBoopBot
                     leftWidth = src.Length;
             leftWidth++;
             // My first named argument
-            BeepBoopBot.Client_Log_Multiple(severity, ClassName, sources, messages, leftWidth: leftWidth, trimCenter: false);
+            BeepBoopBot.Logger.LogMultiple(severity, ClassName, sources, messages, leftWidth: leftWidth, trimCenter: false);
         }
 
         /// <summary> Save the configuration to the path specified in FileName. </summary>
