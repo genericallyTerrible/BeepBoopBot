@@ -11,6 +11,8 @@ namespace BeepBoopBot.Services
     /// <summary> Detect whether a message is a command, then execute it. </summary>
     public class CommandHandler
     {
+        public static string ClassName { get; private set; } = typeof(CommandHandler).Name;
+
         private DiscordShardedClient Client;
         private CommandService CommandService;
 
@@ -67,7 +69,6 @@ namespace BeepBoopBot.Services
         private async Task LogSuccess(IUserMessage msg)
         {
             LogSeverity severity = LogSeverity.Info;
-            string className = this.GetType().Name;
 
             var baseLog = BuildBaseLog(msg);
 
@@ -75,15 +76,14 @@ namespace BeepBoopBot.Services
             string[] messages = baseLog.Item2;
             string[] ids = baseLog.Item3;
 
-            await BeepBoopBot.Client_Log_Multiple(severity, className, sources, messages, ids);
+            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, sources, messages, ids);
             // Log the message seperately to avoid trimming it.
-            await BeepBoopBot.Client_Log_Multiple(severity, className, new[] { "Message" }, new[] { msg.Content }, null, true, false);
+            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, new[] { "Message" }, new[] { msg.Content }, trimCenter: false);
         }
 
         private async Task LogError(IUserMessage msg, IResult result)
         {
             LogSeverity severity = LogSeverity.Error;
-            string className = this.GetType().Name;
 
             var baseLog = BuildBaseLog(msg);
 
@@ -91,17 +91,16 @@ namespace BeepBoopBot.Services
             string[] messages = baseLog.Item2;
             string[] ids = baseLog.Item3;
 
-            await BeepBoopBot.Client_Log_Multiple(severity, className, sources, messages, ids);
+            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, sources, messages, ids);
             // Log the message seperately to avoid trimming it.
-            await BeepBoopBot.Client_Log_Multiple(severity, className, new[] { "Message" }, new[] { msg.Content }, null, true, false);
+            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, new[] { "Message" }, new[] { msg.Content }, trimCenter: false);
             // Log the error seperatley to avoid trimming it.
-            await BeepBoopBot.Client_Log_Multiple(severity, className, new[] { "Error" }, new[] { result.ErrorReason }, null, true, false);
+            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, new[] { "Error" }, new[] { result.ErrorReason }, trimCenter: false);
         }
 
         private async Task LogException(IUserMessage msg, Exception e)
         {
             LogSeverity severity = LogSeverity.Critical;
-            string className = this.GetType().Name;
 
             var baseLog = BuildBaseLog(msg);
 
@@ -109,11 +108,11 @@ namespace BeepBoopBot.Services
             string[] messages = baseLog.Item2;
             string[] ids      = baseLog.Item3;
             
-            await BeepBoopBot.Client_Log_Multiple(severity, className, sources, messages, ids);
+            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, sources, messages, ids);
             // Log the message seperately to avoid trimming it.
-            await BeepBoopBot.Client_Log_Multiple(severity, className, new[] { "Message" }, new[] { msg.Content }, null, true, false);
+            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, new[] { "Message" }, new[] { msg.Content }, trimCenter: false);
             // Log the error seperatley to avoid trimming it.
-            await BeepBoopBot.Client_Log_Multiple(severity, className, new[] { "Exception" }, new[] { e.Message }, null, true, false);
+            await BeepBoopBot.Client_Log_Multiple(severity, ClassName, new[] { "Exception" }, new[] { e.Message }, trimCenter: false);
         }
 
         private Tuple<string[], string[], string[]> BuildBaseLog(IUserMessage msg)

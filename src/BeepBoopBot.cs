@@ -9,11 +9,16 @@ namespace BeepBoopBot
 {
     public class BeepBoopBot
     {
+        public static string ClassName { get; private set; } = typeof(BeepBoopBot).Name;
+
         public static CommandHandler CommandHandler { get; private set; }
         public static CommandService CommandService { get; private set; }
         public static DiscordShardedClient Client { get; private set; }
 
         public static Localization Localization { get; protected set; }
+
+
+        private static int DefaultLeftPadding = 15;
 
         static BeepBoopBot()
         {
@@ -21,12 +26,14 @@ namespace BeepBoopBot
 
         public async Task StartAsync()
         {
-            Console.WriteLine("Booting up!");                // Let the user know I'm awake!
+            // Let the user know I'm awake!
+            await Client_Log(ClassName, "Booting up!");
 
             Configuration.EnsureExists();                    // Ensure the configuration file has been created.
 
             Configuration config = Configuration.Load();     // Loads the current configuration.
-            Console.WriteLine(Configuration.ListConfiguration(config));
+
+            Configuration.PrintConfiguration(config);
 
 
             if (!config.AutoStart)
@@ -46,18 +53,22 @@ namespace BeepBoopBot
             await Client.LoginAsync(TokenType.Bot, config.Token);
             await Client.StartAsync();
 
-            CommandHandler = new CommandHandler();                // Initialize the command handler service
+            CommandHandler = new CommandHandler();           // Initialize the command handler service
             await CommandHandler.InstallAsync(Client);
 
             await Task.Delay(-1);                            // Prevent the console window from closing.
         }
 
+
+        public static Task Client_Log(string source, string message, LogSeverity severity = LogSeverity.Info)
+        {
+            Client_Log(new LogMessage(severity, source, message), DefaultLeftPadding);
+            return Task.CompletedTask;
+        }
+
         public static Task Client_Log(LogMessage msg)
         {
-            int defaultLeftPadding = 15;
-
-            Client_Log(msg, defaultLeftPadding);
-
+            Client_Log(msg, DefaultLeftPadding);
             return Task.CompletedTask;
         }
 
@@ -100,7 +111,6 @@ namespace BeepBoopBot
             return Task.CompletedTask;
         }
 
-
         public static Task Client_Log_Multiple(
             LogSeverity severity, string source, string[] sources = null, string[] messages = null, string[] ids = null,
             bool trimLeft = true, bool trimCenter = true, int leftWidth = 10, int centerWidth = 15
@@ -116,10 +126,10 @@ namespace BeepBoopBot
             {
                 // Such coalesce, much wow.
                 // If the array is not null and has an entry at i, trim the entry if possible (not null), or return "".
-                string left   = sources ?.Length > i ? (sources[i] ?.Trim() ?? "") : "";
+                string left = sources?.Length > i ? (sources[i]?.Trim() ?? "") : "";
                 string center = messages?.Length > i ? (messages[i]?.Trim() ?? "") : "";
-                string right  = ids     ?.Length > i ? (ids[i]     ?.Trim() ?? "") : "";
-                
+                string right = ids?.Length > i ? (ids[i]?.Trim() ?? "") : "";
+
                 // If the left section is too long
                 if (trimLeft && left.Length >= leftWidth)
                 {
@@ -145,7 +155,7 @@ namespace BeepBoopBot
                         source,
                         left.ToUpperInvariant() +
                         (!string.IsNullOrWhiteSpace(center) ? (" | " + center) : "") +
-                        (!string.IsNullOrWhiteSpace(right)  ? ($"[{right}]")   : "")
+                        (!string.IsNullOrWhiteSpace(right) ? ($"[{right}]") : "")
                     ));
             }
 

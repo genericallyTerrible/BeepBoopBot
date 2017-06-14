@@ -19,6 +19,9 @@ namespace BeepBoopBot
 
         #region Properties
 
+        [JsonIgnore]
+        public static string ClassName { get; private set; } = typeof(Configuration).Name;
+
         /// <summary> The location and name of your bot's configuration file. </summary>
         [JsonIgnore]
         public static string FileName { get; private set; } = "config/configuration.json";
@@ -105,11 +108,13 @@ namespace BeepBoopBot
         /// <summary> Used to ensure the a configuration file. </summary>
         public static void EnsureExists()
         {
-            Console.WriteLine("Loading Configuration...");
+            BeepBoopBot.Client_Log(ClassName, "Loading Configuration...");
+
             string file = Path.Combine(AppContext.BaseDirectory, FileName);
             if (!File.Exists(file))                                 // Check if the configuration file exists.
             {
-                Console.WriteLine("Configuration not found");
+                BeepBoopBot.Client_Log(ClassName, "Configuration not found", LogSeverity.Warning);
+                Console.WriteLine();
 
                 string path = Path.GetDirectoryName(file);          // Create config directory if doesn't exist.
                 if (!Directory.Exists(path))
@@ -121,17 +126,22 @@ namespace BeepBoopBot
                     BotMaster = GetBotMaster()                      // Get the bot master's id from the user.
                 };
                 config.SaveJson();                                  // Save the new configuration object to file.
+
+                Console.WriteLine();
             }
-            Console.WriteLine("Configuration Loaded");
+
+            BeepBoopBot.Client_Log(ClassName, "Configuration Loaded");
         }
 
         /// <summary> Uses to console to ask the user if they want to change bot settings. </summary>
         public void PromptForChanges()
         {
+            Console.WriteLine();
             Console.WriteLine("Would you like to change my settings? (y/n): ");
             string input = Console.ReadLine().ToLower();        // Collect user input.
             if (input.Length > 0 && input[0] == 'y')            // Check if input is long enough and uesr said yes.
                 ChangeBotSettings();                            // Otherwise, assume no.
+            Console.WriteLine();
         }
 
         /// <summary> Uses the console to allow a user to change bot settings. </summary>
@@ -199,7 +209,9 @@ namespace BeepBoopBot
                             break;
 
                         case 's':                                   // List settings.
-                            Console.WriteLine(ListConfiguration(this));
+                            Console.WriteLine();
+                            PrintConfiguration(this);
+                            Console.WriteLine();
                             break;
 
                         case 'q':                                   // Quit changing settings.
@@ -417,6 +429,46 @@ namespace BeepBoopBot
 
             sb.AppendLine("Logging severity is currently:\n" + config.LoggingSeverity.ToString());
             return sb.ToString();
+        }
+
+        /// <summary> Prints the current bot configuration to the console using Client_Log_Multiple </summary>
+        public static void PrintConfiguration()
+        {
+            PrintConfiguration(Configuration.Load());
+        }
+
+        /// <summary> Prints the specified bot configuration to the console using Client_Log_Multiple </summary>
+        public static void PrintConfiguration(Configuration config)
+        {
+            LogSeverity severity = LogSeverity.Info;
+            string[] sources = new string[6];
+            string[] messages = new string[6];
+
+            sources[0] = "Token";
+            messages[0] = config.Token;
+
+            sources[1] = "Prefix";
+            messages[1] = config.Prefix;
+
+            sources[2] = "Bot master";
+            messages[2] = $"{config.BotMaster}";
+
+            sources[3] = "Embed color";
+            messages[3] = $"{config.EmbedColor}".ToUpper();
+
+            sources[4] = "Autostart";
+            messages[4] = $"{config.AutoStart}";
+
+            sources[5] = "Log severity";
+            messages[5] = $"{config.LoggingSeverity}";
+
+            int leftWidth = 0;
+            foreach (string src in sources)
+                if (src.Length > leftWidth)
+                    leftWidth = src.Length;
+            leftWidth++;
+            // My first named argument
+            BeepBoopBot.Client_Log_Multiple(severity, ClassName, sources, messages, leftWidth: leftWidth, trimCenter: false);
         }
 
         /// <summary> Save the configuration to the path specified in FileName. </summary>
