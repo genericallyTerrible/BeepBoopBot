@@ -17,7 +17,7 @@ namespace BeepBoopBot.Services
         public event EventHandler CountdownCompleted;
         public event EventHandler CountdownCanceled;
 
-        private string CancelablePrompt = " press any key to continue. . .";
+        private string CancelablePrompt = "Press any key to continue. . .";
 
         private static readonly string Second = " second";
         private static readonly int maxTimeDisplayLength = (int.MaxValue / 1000).ToString().Length;
@@ -93,7 +93,8 @@ namespace BeepBoopBot.Services
             if (ElapsedTime < RunTime)
             {
                 int remainingTime = (RunTime - ElapsedTime) / 1000;
-                string plural = remainingTime != 1 ? "s" : "";
+                string plural = remainingTime != 1 ? "s. " : ". ";
+
                 string prompt = $"\r{Prompt}{remainingTime}{Second}{plural}";
                 int promptRealLength = 0;
                 if (Cancelable)
