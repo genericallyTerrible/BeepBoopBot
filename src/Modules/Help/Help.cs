@@ -44,7 +44,7 @@ namespace BeepBoopBot.Modules.Help
             await ReplyAsync("", false, embedBuilder.Build());
         }
 
-        [BotCommand, Description, Aliases]
+        [BotCommand, Usage, Description, Aliases]
         public async Task HelpWith
         (
         [Summary("The command you want help on."),Remainder]
@@ -80,10 +80,10 @@ namespace BeepBoopBot.Modules.Help
                             field.Name = fieldName;
 
                             field.Value = (
-                            (cmdMatch.Aliases?.Count() > 0 ? ($"**Aliases**\n\t{   string.Join(", ", cmdMatch.Aliases)}\n") : ("")) +
-                            (cmdMatch.Parameters?.Count() > 0 ? ($"**Parameters**\n\t{                  parameters       }\n") : ("")) +
-                            (cmdMatch.Summary?.Count() > 0 ? ($"**Summary**\n\t{   string.Join(", ", cmdMatch.Summary)}\n") : ("")) +
-                            (cmdMatch.Remarks?.Count() > 0 ? ($"**Usage**\n\t{                       cmdMatch.Remarks }\n") : (""))  
+                            (cmdMatch.Aliases?   .Count() > 0 ? ($"**Aliases**\n\t{   string.Join(", ", cmdMatch.Aliases)    }\n") : ("")) +
+                            (cmdMatch.Parameters?.Count() > 0 ? ($"**Parameters**\n\t{                  parameters           }\n") : ("")) +
+                            (cmdMatch.Summary?   .Count() > 0 ? ($"**Summary**\n\t{   string.Join(", ", cmdMatch.Summary)    }\n") : ("")) +
+                            (cmdMatch.Remarks?   .Count() > 0 ? ($"**Usage**\n\t{     string.Format(cmdMatch.Remarks, prefix)}\n") : (""))  
                             .Trim());
 
                             field.IsInline = false;
