@@ -1,18 +1,18 @@
-﻿using Discord;
+﻿using BeepBoopBot.Preconditions;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
-using BeepBoopBot.Preconditions;
 using System.Threading.Tasks;
 using System;
+using BeepBoopBot.Attributes;
 
 namespace BeepBoopBot.Modules
 {
     [Name("Bot Maintenance")]
     [MinPermissions(BotAccessLevel.BotOwner)]
-    public class MaintenanceModule : ModuleBase<ShardedCommandContext>
+    public class Maintenance : ModuleBase<ShardedCommandContext>
     {
-        [Command("config")]
-        [Remarks("Lists the bot's current configuration")]
+        [BotCommand, Usage, Description, Aliases]
         [RequireContext(ContextType.DM)]
         public async Task Config()
         {
@@ -55,9 +55,12 @@ namespace BeepBoopBot.Modules
         [Group("add"), Name("Bot Maintenance")]
         public class Add : ModuleBase
         {
-            [Command("owner", RunMode = RunMode.Async)]
-            [Remarks("Adds the specified user as one of my owners.")]
-            public async Task AddOwner([Remainder]SocketGuildUser user)
+            [BotCommand, Usage, Description, Aliases]
+            public async Task AddOwner
+            (
+                [Parameter(0), Remainder]
+                SocketGuildUser user
+            )
             {
                 Configuration config = Configuration.Load();
                 if (user.Id == config.BotMaster)
@@ -88,9 +91,12 @@ namespace BeepBoopBot.Modules
         [Group("remove"), Name("Bot Maintenance")]
         public class Remove : ModuleBase
         {
-            [Command("owner", RunMode = RunMode.Async)]
-            [Remarks("Removes the specified user as one of my owners.")]
-            public async Task RemoveOwner([Remainder]SocketGuildUser user)
+            [BotCommand, Usage, Description, Aliases]
+            public async Task RemoveOwner
+            (
+                [Parameter(0), Remainder]
+                SocketGuildUser user
+            )
             {
                 Configuration config = Configuration.Load();
                 if (user.Id == config.BotMaster)
@@ -116,16 +122,15 @@ namespace BeepBoopBot.Modules
         [Group("modify"), Name("Bot Maintenance")]
         public class Modify : ModuleBase
         {
-            [Command("color")]
-            [Remarks("")]
-            public async Task ModifyColor
+            [BotCommand, Usage, Description, Aliases]
+            public async Task ModifyColor0
             (
-            [Summary("Integer value of the red component of the new color.")]
-            int r,
-            [Summary("Integer value of the green component of the new color.")]
-            int g,
-            [Summary("Integer value of the blue component of the new color.")]
-            int b
+                [Parameter(0)]
+                int r,
+                [Parameter(0)]
+                int g,
+                [Parameter(0)]
+                int b
             )
             {
                 Configuration config = Configuration.Load();
@@ -141,12 +146,12 @@ namespace BeepBoopBot.Modules
 
             }
 
-            [Command("color")]
-            [Remarks("")]
-            public async Task ModifyColor
-                (
-                [Summary("The hex code of the new color."), Remainder]string hexColor
-                )
+            [BotCommand, Usage, Description, Alias]
+            public async Task ModifyColor1
+            (
+                [Parameter(0), Remainder]
+                string hexColor
+            )
             {
                 Configuration config = Configuration.Load();
                 bool success = false;

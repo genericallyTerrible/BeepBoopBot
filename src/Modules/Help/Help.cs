@@ -12,17 +12,17 @@ namespace BeepBoopBot.Modules.Help
 {
     [Name("Help Commands")]
     [MinPermissions(BotAccessLevel.User)]
-    public class HelpModule : ModuleBase<ShardedCommandContext>
+    public class Help : ModuleBase<ShardedCommandContext>
     {
-        private CommandService _service;
+        private CommandService Service;
 
-        public HelpModule(CommandService service)           // Create a constructor for the commandservice dependency
+        public Help(CommandService service)           // Create a constructor for the commandservice dependency
         {
-            _service = service;
+            Service = service;
         }
 
         [BotCommand, Usage, Description, Aliases]
-        public async Task Help()
+        public async Task Help0()
         {
             string prefix = Configuration.Load().Prefix;
             EmbedBuilder embedBuilder = new EmbedBuilder()
@@ -31,7 +31,7 @@ namespace BeepBoopBot.Modules.Help
                 Description = "Here's a list of my commands!"
             };
 
-            IEnumerable<ModuleInfo> modules = _service.Modules.Where(module => !module.IsSubmodule); // List of project modules.
+            IEnumerable<ModuleInfo> modules = Service.Modules.Where(module => !module.IsSubmodule); // List of project modules.
 
             foreach (ModuleInfo module in modules) // Iterate over modules
             {
@@ -41,14 +41,14 @@ namespace BeepBoopBot.Modules.Help
                     embedBuilder.AddField(moduleField);
             }
 
-            await ReplyAsync("", false, embedBuilder.Build());
+            await ReplyAsync("", embed:embedBuilder.Build());
         }
 
         [BotCommand, Usage, Description, Aliases]
-        public async Task HelpWith
+        public async Task Help1
         (
-        [Summary("The command you want help on."),Remainder]
-        string command
+            [Parameter(0), Remainder]
+            string command
         )
         {
             string prefix = Configuration.Load().Prefix;
@@ -57,14 +57,14 @@ namespace BeepBoopBot.Modules.Help
                 //Trim the prefix if present
                 command = command.Substring(prefix.Length);
             }
-            SearchResult result = _service.Search(Context, command);
+            SearchResult result = Service.Search(Context, command);
 
             if (result.IsSuccess)
             {
                 EmbedBuilder embedBuilder = new EmbedBuilder()
                 {
-                    Color = Configuration.Load().EmbedColor,
-                    Description = $"Here are some commands like `{command}`"
+                    Color = Configuration.Load().EmbedColor
+                    //Description = $"Here are some commands like `{command}`"
                 };
 
                 foreach (CommandMatch match in result.Commands)
@@ -80,20 +80,19 @@ namespace BeepBoopBot.Modules.Help
                             field.Name = fieldName;
 
                             field.Value = (
-                            (cmdMatch.Aliases?   .Count() > 0 ? ($"**Aliases**\n\t{   string.Join(", ", cmdMatch.Aliases)    }\n") : ("")) +
-                            (cmdMatch.Parameters?.Count() > 0 ? ($"**Parameters**\n\t{                  parameters           }\n") : ("")) +
-                            (cmdMatch.Summary?   .Count() > 0 ? ($"**Summary**\n\t{   string.Join(", ", cmdMatch.Summary)    }\n") : ("")) +
-                            (cmdMatch.Remarks?   .Count() > 0 ? ($"**Usage**\n\t{     string.Format(cmdMatch.Remarks, prefix)}\n") : (""))  
+                            (cmdMatch.Summary?   .Count() > 0 ? ($"**Summary**\n\t{   string.Join(", ", cmdMatch.Summary)}\n") : ("")) +
+                            (cmdMatch.Aliases?   .Count() > 0 ? ($"**Aliases**\n\t{   string.Join(", ", cmdMatch.Aliases)}\n") : ("")) +
+                            (cmdMatch.Parameters?.Count() > 0 ? ($"**Parameters**\n\t{                  parameters       }\n") : ("")) +
+                            (cmdMatch.Remarks?   .Count() > 0 ? ($"**Usage**\n\t{string.Format(cmdMatch.Remarks, prefix, cmdMatch.Aliases.First())}\n") : (""))  
                             .Trim());
 
-                            field.IsInline = false;
+                            field.IsInline = true;
                         });
-                        //embedBuilder.AddField(fb => fb.WithName(GetText("usage")).WithValue(string.Format(com.Remarks, com.Module.Aliases.First())).WithIsInline(false));
                     }
                 }
                 if (embedBuilder.Fields.Count > 0)
                 {
-                    await ReplyAsync("", false, embedBuilder.Build());
+                    await ReplyAsync($"Here are some commands like `{command}`", embed: embedBuilder.Build());
                     return;
                 }
             }

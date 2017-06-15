@@ -67,13 +67,18 @@ namespace BeepBoopBot.Services
 
         public void StartCountdown(int delay = 0)
         {
-            if (Cancelable)
-            {
-                // Start the async task to cancel if input is detected
-                CancelOnInput();
-            }
             // Start the countdown.
             timer.Change(delay, Interval);
+
+            if (Cancelable)
+            {
+                // Clear the input buffer.
+                while (Console.KeyAvailable)
+                    Console.ReadKey(true);
+
+                // Start the async task to cancel if input is detected.
+                CancelOnInput();
+            }
         }
 
         public void StopCountdown()

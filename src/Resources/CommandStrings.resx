@@ -117,22 +117,229 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="helpwith_cmd" xml:space="preserve">
+  <data name="help1_cmd" xml:space="preserve">
     <value>help h halp</value>
   </data>
-  <data name="helpwith_desc" xml:space="preserve">
+  <data name="help1_desc" xml:space="preserve">
     <value>Shows helpful information about a specified command.</value>
   </data>
-  <data name="helpwith_usage" xml:space="preserve">
-    <value>`{0}help &lt;command&gt;`</value>
+  <data name="help1_usage" xml:space="preserve">
+    <value>`{0}{1} command`</value>
   </data>
-  <data name="help_cmd" xml:space="preserve">
+  <data name="help0_cmd" xml:space="preserve">
     <value>help h halp</value>
   </data>
-  <data name="help_desc" xml:space="preserve">
+  <data name="help0_desc" xml:space="preserve">
     <value>Lists all available commands.</value>
   </data>
-  <data name="help_usage" xml:space="preserve">
-    <value>`{0}help`</value>
+  <data name="help0_usage" xml:space="preserve">
+    <value>`{0}{1}`</value>
+  </data>
+  <data name="addmany_cmd" xml:space="preserve">
+    <value>addmany</value>
+  </data>
+  <data name="addmany_desc" xml:space="preserve">
+    <value>Returns the sum of many numbers.</value>
+  </data>
+  <data name="addmany_param0" xml:space="preserve">
+    <value>The list of numbers to be summed.</value>
+  </data>
+  <data name="addmany_usage" xml:space="preserve">
+    <value>`{0}{1} 5 4 3 2 1 0`</value>
+  </data>
+  <data name="addowner_cmd" xml:space="preserve">
+    <value>owner</value>
+  </data>
+  <data name="addowner_desc" xml:space="preserve">
+    <value>Adds the mentioned user as one of my owners.</value>
+  </data>
+  <data name="addowner_param0" xml:space="preserve">
+    <value>The mention of the user you want to add as an owner.</value>
+  </data>
+  <data name="addowner_usage" xml:space="preserve">
+    <value>`{0}{1} @user`</value>
+  </data>
+  <data name="botnick_cmd" xml:space="preserve">
+    <value>botnick</value>
+  </data>
+  <data name="botnick_desc" xml:space="preserve">
+    <value>Changes my nickname in the current server.</value>
+  </data>
+  <data name="botnick_param0" xml:space="preserve">
+    <value>My new nickname for this server.</value>
+  </data>
+  <data name="botnick_usage" xml:space="preserve">
+    <value>`{0}{1} newBotName`</value>
+  </data>
+  <data name="config_cmd" xml:space="preserve">
+    <value>config</value>
+  </data>
+  <data name="config_desc" xml:space="preserve">
+    <value>Lists my current configuration.</value>
+  </data>
+  <data name="config_usage" xml:space="preserve">
+    <value>`{0}{1}`</value>
+  </data>
+  <data name="help1_param0" xml:space="preserve">
+    <value>The command you want help on.</value>
+  </data>
+  <data name="isinteger_cmd" xml:space="preserve">
+    <value>isinteger isint</value>
+  </data>
+  <data name="isinteger_desc" xml:space="preserve">
+    <value>Checks if the input text is a whole number.</value>
+  </data>
+  <data name="isinteger_param0" xml:space="preserve">
+    <value>The value to check.</value>
+  </data>
+  <data name="isinteger_usage" xml:space="preserve">
+    <value>`{0}{1} 1234`</value>
+  </data>
+  <data name="kick_cmd" xml:space="preserve">
+    <value>kick</value>
+  </data>
+  <data name="kick_desc" xml:space="preserve">
+    <value>Kick the specified user.</value>
+  </data>
+  <data name="kick_param0" xml:space="preserve">
+    <value>The mention of the user you want to kick.</value>
+  </data>
+  <data name="kick_usage" xml:space="preserve">
+    <value>`{0}{1} @user`</value>
+  </data>
+  <data name="modifycolor0_cmd" xml:space="preserve">
+    <value>color</value>
+  </data>
+  <data name="modifycolor0_desc" xml:space="preserve">
+    <value>Modifies the color I use for embedded messages.</value>
+  </data>
+  <data name="modifycolor0_param0" xml:space="preserve">
+    <value>Integer value of the red component of the new color. (0 - 255)</value>
+  </data>
+  <data name="modifycolor0_param1" xml:space="preserve">
+    <value>Integer value of the green component of the new color. (0 - 255)</value>
+  </data>
+  <data name="modifycolor0_param2" xml:space="preserve">
+    <value>Integer value of the blue component of the new color. (0 - 255)</value>
+  </data>
+  <data name="modifycolor0_usage" xml:space="preserve">
+    <value>`{0}{1} 0 255 0`</value>
+  </data>
+  <data name="modifycolor1_cmd" xml:space="preserve">
+    <value>color</value>
+  </data>
+  <data name="modifycolor1_desc" xml:space="preserve">
+    <value>Modifies the color I use for embedded messages.</value>
+  </data>
+  <data name="modifycolor1_param0" xml:space="preserve">
+    <value>"The hex code of the new color."</value>
+  </data>
+  <data name="modifycolor1_usage" xml:space="preserve">
+    <value>`{0}{1} #00FF00`</value>
+  </data>
+  <data name="multiply_cmd" xml:space="preserve">
+    <value>multiply mult</value>
+  </data>
+  <data name="multiply_desc" xml:space="preserve">
+    <value>Get the product of two numbers.</value>
+  </data>
+  <data name="multiply_param0" xml:space="preserve">
+    <value>The multiplier.</value>
+  </data>
+  <data name="multiply_param1" xml:space="preserve">
+    <value>The multiplicand.</value>
+  </data>
+  <data name="multiply_usage" xml:space="preserve">
+    <value>`{0}{1} 4 10`</value>
+  </data>
+  <data name="nick0_cmd" xml:space="preserve">
+    <value>nick</value>
+  </data>
+  <data name="nick0_desc" xml:space="preserve">
+    <value>I change the nickname of whoever you mentioned to whatever you wanted.</value>
+  </data>
+  <data name="nick0_param0" xml:space="preserve">
+    <value>The mention of the user you want to change the nickname of.</value>
+  </data>
+  <data name="nick0_param1" xml:space="preserve">
+    <value>The new nickname for the user.</value>
+  </data>
+  <data name="nick0_usage" xml:space="preserve">
+    <value>`{0}{1} @user newName`</value>
+  </data>
+  <data name="nick1_cmd" xml:space="preserve">
+    <value>nick</value>
+  </data>
+  <data name="nick1_desc" xml:space="preserve">
+    <value>I change your nickname to whatever you want.</value>
+  </data>
+  <data name="nick1_param0" xml:space="preserve">
+    <value>Your desired new nickname.</value>
+  </data>
+  <data name="nick1_usage" xml:space="preserve">
+    <value>`{0}{1} newName`</value>
+  </data>
+  <data name="removeowner_cmd" xml:space="preserve">
+    <value>owner</value>
+  </data>
+  <data name="removeowner_desc" xml:space="preserve">
+    <value>Removes the mentioned user from my list of owners.</value>
+  </data>
+  <data name="removeowner_param0" xml:space="preserve">
+    <value>The mention of the user you want to remove from my list of owners.</value>
+  </data>
+  <data name="removeowner_usage" xml:space="preserve">
+    <value>`{0}{1} @user`</value>
+  </data>
+  <data name="say0_cmd" xml:space="preserve">
+    <value>say s</value>
+  </data>
+  <data name="say0_desc" xml:space="preserve">
+    <value>Makes me say something in a specific channel.</value>
+  </data>
+  <data name="say0_param0" xml:space="preserve">
+    <value>The text channel you want me to send a message in.</value>
+  </data>
+  <data name="say0_param1" xml:space="preserve">
+    <value>The message you want me to send in the channel.</value>
+  </data>
+  <data name="say0_usage" xml:space="preserve">
+    <value>`{0}{1} #textChannel message`</value>
+  </data>
+  <data name="say1_cmd" xml:space="preserve">
+    <value>say s</value>
+  </data>
+  <data name="say1_desc" xml:space="preserve">
+    <value>Makes me DM something to a specific user.</value>
+  </data>
+  <data name="say1_param0" xml:space="preserve">
+    <value>The mention of the user you want me to send a message to.</value>
+  </data>
+  <data name="say1_param1" xml:space="preserve">
+    <value>The message you want me to send to the user.</value>
+  </data>
+  <data name="say1_usage" xml:space="preserve">
+    <value>`{0}{1} @user message`</value>
+  </data>
+  <data name="say2_cmd" xml:space="preserve">
+    <value>say s</value>
+  </data>
+  <data name="say2_desc" xml:space="preserve">
+    <value>Makes me say something in the current channel.</value>
+  </data>
+  <data name="say2_param0" xml:space="preserve">
+    <value>The message you want me to say in this channel.</value>
+  </data>
+  <data name="say2_usage" xml:space="preserve">
+    <value>`{0}{1} message`</value>
+  </data>
+  <data name="test_cmd" xml:space="preserve">
+    <value>test</value>
+  </data>
+  <data name="test_desc" xml:space="preserve">
+    <value>Tests to see if I'm still working.</value>
+  </data>
+  <data name="test_usage" xml:space="preserve">
+    <value>`{0}{1}`</value>
   </data>
 </root>

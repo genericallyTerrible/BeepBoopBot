@@ -1,19 +1,22 @@
-﻿using Discord.Commands;
+﻿using BeepBoopBot.Attributes;
+using Discord.Commands;
 using Discord.WebSocket;
-using BeepBoopBot.Preconditions;
 using System.Threading.Tasks;
 
-namespace BeepBoopBot.Modules
+namespace BeepBoopBot.Modules.Moderation
 {
     [Name("Moderation")]
     [RequireContext(ContextType.Guild)]
-    public class ModeratorModule : ModuleBase<ShardedCommandContext>
+    public class Moderation : ModuleBase<ShardedCommandContext>
     {
-        [Command("kick")]
-        [Summary("Kick the specified user.")]
+        [BotCommand, Usage, Description, Aliases]
         [RequireUserPermission(Discord.GuildPermission.KickMembers)]
         [RequireBotPermission(Discord.GuildPermission.KickMembers)]
-        public async Task Kick([Remainder]SocketGuildUser user)
+        public async Task Kick
+        (
+            [Parameter(0), Remainder]
+            SocketGuildUser user
+        )
         {
             SocketGuildUser moderator = Context.User as SocketGuildUser;
             if (moderator.Hierarchy > user.Hierarchy)
