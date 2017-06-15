@@ -403,7 +403,7 @@ namespace BeepBoopBot
                 }
             }
             LoggingSeverity = severitiesList[newLogLevelIndex];          // Update the logging severity.
-            ToJson();                                               // Save the changes.
+            SaveJson();                                                  // Save the changes.
         }
 
         /// <summary> Returns a string enumerating the bot's current configuration. </summary>
