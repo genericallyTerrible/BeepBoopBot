@@ -47,7 +47,7 @@ namespace BeepBoopBot.Preconditions
         public override Task<PreconditionResult> CheckPermissions(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
             ServerAccessLevel serverAccess = GetServerPermission(context);            // Get the acccesslevel for this context
-            BotAccessLevel botAccess = GetBotPermission(context);        //Personal override for now. Remove in release versions.
+            BotAccessLevel botAccess = GetBotPermission(context);
             if (requiredPreconditions == RequiredPreconditions.RequireAllPreconditions)
             {
                 if ((serverAccess >= serverLevel && botAccess >= botLevel))// || botAccess == BotAccessLevel.BotMaster)          // If the user's access level is greater than the required level, return success.

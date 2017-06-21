@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BeepBoopBot.Modules
 {
-    [Name("Math")]
+    [BotModule("Math")]
     [MinPermissions(BotAccessLevel.User)]
     public class Math : ModuleBase<ShardedCommandContext>
     {

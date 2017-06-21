@@ -9,6 +9,8 @@ namespace BeepBoopBot.Services
 {
     public class Logger
     {
+        public ConsoleColor DefaultForeground { get; private set; }
+        public ConsoleColor DefaultBackground { get; private set; }
 
         public int DefaultLeftPadding { get; private set; }
         public LogSeverity LoggingSeverity { get; set; }
@@ -19,12 +21,16 @@ namespace BeepBoopBot.Services
         {
             DefaultLeftPadding = defaultLeftPadding;
             LoggingSeverity = LogSeverity.Debug;                // Log everything if not specified.
+            DefaultForeground = Console.ForegroundColor;
+            DefaultBackground = Console.BackgroundColor;
         }
 
         public Logger(LogSeverity loggingSeverity, int defaultLeftPadding = defaultPadding)
         {
             DefaultLeftPadding = defaultLeftPadding;
             LoggingSeverity = loggingSeverity;
+            DefaultForeground = Console.ForegroundColor;
+            DefaultBackground = Console.BackgroundColor;
         }
 
         /// <summary>
@@ -78,8 +84,8 @@ namespace BeepBoopBot.Services
                         break;
                 }
                 // Reset console colors
-                Console.BackgroundColor = ConsoleColor.Black;
-                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.BackgroundColor = DefaultBackground;
+                Console.ForegroundColor = DefaultForeground;
             }
 
             return Task.CompletedTask;

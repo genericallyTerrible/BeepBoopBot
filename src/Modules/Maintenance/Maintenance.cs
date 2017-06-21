@@ -8,7 +8,7 @@ using BeepBoopBot.Attributes;
 
 namespace BeepBoopBot.Modules
 {
-    [Name("Bot Maintenance")]
+    [BotModule("Maintenance")]
     [MinPermissions(BotAccessLevel.BotOwner)]
     public class Maintenance : ModuleBase<ShardedCommandContext>
     {
@@ -51,8 +51,15 @@ namespace BeepBoopBot.Modules
             await ReplyAsync("", false, settingsBuilder.Build());
         }
 
+        //[Command("die")]
+        //[MinPermissions(BotAccessLevel.BotMaster)]
+        //public async Task Die()
+        //{
+        //    await BeepBoopBot.Client.StopAsync();
+        //}
+
         [MinPermissions(BotAccessLevel.BotMaster)]
-        [Group("add"), Name("Bot Maintenance")]
+        [Group("add"), Name("Maintenance")]
         public class Add : ModuleBase
         {
             [BotCommand, Usage, Description, Aliases]
@@ -88,7 +95,7 @@ namespace BeepBoopBot.Modules
         }
 
         [MinPermissions(BotAccessLevel.BotMaster)]
-        [Group("remove"), Name("Bot Maintenance")]
+        [Group("remove"), Name("Maintenance")]
         public class Remove : ModuleBase
         {
             [BotCommand, Usage, Description, Aliases]
@@ -117,9 +124,9 @@ namespace BeepBoopBot.Modules
                     }
                 }
             }
-        }
 
-        [Group("modify"), Name("Bot Maintenance")]
+        }
+        [Group("modify"), Name("Maintenance")]
         public class Modify : ModuleBase
         {
             [BotCommand, Usage, Description, Aliases]

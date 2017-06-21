@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace BeepBoopBot.Modules.Moderation
 {
-    [Name("Moderation")]
+    [BotModule("Moderation")]
     [RequireContext(ContextType.Guild)]
     public class Moderation : ModuleBase<ShardedCommandContext>
     {

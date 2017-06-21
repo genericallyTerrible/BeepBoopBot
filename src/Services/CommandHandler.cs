@@ -116,7 +116,7 @@ namespace BeepBoopBot.Services
 
         private Tuple<string[], string[], string[]> BuildBaseLog(IUserMessage msg)
         {
-            bool isDM = (msg.Channel.GetType() == typeof(SocketDMChannel));
+            bool isDM = (msg.Channel is SocketDMChannel);
 
             string[] sources = new string[3];
             string[] messages = new string[3];

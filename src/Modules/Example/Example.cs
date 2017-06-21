@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BeepBoopBot.Modules
 {
-    [Name("Example")]
+    [BotModule("Example")]
     [MinPermissions(BotAccessLevel.User)]
     public class Example : ModuleBase<ShardedCommandContext>
     {
@@ -118,18 +118,30 @@ namespace BeepBoopBot.Modules
                 await ReplyAsync($"I changed my name to **{name}**");
             }
 
-            //[Group("me"), Name("Example")]
-            //[MinPermissions(BotAccessLevel.BotMaster)]
-            //public class Me : ModuleBase
-            //{
-            //    [Command("trash")]
-            //    [MinPermissions(BotAccessLevel.BotMaster)]
-            //    public async Task Trash()
-            //    {
+            [Group("me"), Name("Me")]
+            [MinPermissions(BotAccessLevel.BotMaster)]
+            public class Me : ModuleBase
+            {
+                [Command("trash")]
+                [MinPermissions(BotAccessLevel.BotMaster)]
+                public async Task Trash()
+                {
 
-            //        await ReplyAsync("I am trash");
-            //    }
-            //}
+                    await ReplyAsync("I am trash");
+                }
+
+                [Group("total"), Name("Example")]
+                public class Example : ModuleBase
+                {
+                    [Command("trash")]
+                    [MinPermissions(BotAccessLevel.BotMaster)]
+                    public async Task Trash()
+                    {
+
+                        await ReplyAsync("I am trash");
+                    }
+                }
+            }
         }
     }
 }
