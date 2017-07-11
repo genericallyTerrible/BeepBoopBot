@@ -4,6 +4,7 @@
     {
         Bot,
         User,
+        ComicAuthor,
         BotOwner,
         BotMaster
     }

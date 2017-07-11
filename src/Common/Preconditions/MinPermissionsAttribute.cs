@@ -90,17 +90,18 @@ namespace BeepBoopBot.Preconditions
 
         public BotAccessLevel GetBotPermission(ICommandContext c)
         {
+            Configuration config = Configuration.Load();
             if (c.User.IsBot) //Identify bots
             {
                 return BotAccessLevel.Bot;
             }
-            else if (c.User.Id == Configuration.Load().BotMaster)     // Give the master even more special access.
+            else if (c.User.Id == config.BotMaster)     // Give the master even more special access.
             {
                 return BotAccessLevel.BotMaster;
             }
-            else if (Configuration.Load().Owners.Contains(c.User.Id)) // Give configured owners special access.
+            else if (config.Owners.Contains(c.User.Id)) // Give configured owners special access.
             {
-                return BotAccessLevel.BotOwner;
+                return BotAccessLevel.Owner;
             }
             else
             {

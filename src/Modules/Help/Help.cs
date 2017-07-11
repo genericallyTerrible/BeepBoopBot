@@ -42,7 +42,6 @@ namespace BeepBoopBot.Modules.Help
                 foreach (EmbedFieldBuilder moduleField in moduleFields) // If there was a module field returned, add it to the builder.
                     embedBuilder.AddField(moduleField);
             }
-
             await ReplyAsync("", embed:embedBuilder.Build());
         }
 
@@ -54,7 +53,6 @@ namespace BeepBoopBot.Modules.Help
         )
         {
             Configuration config = Configuration.Load();
-
             // Trim the prefix if present
             if (command.Substring(0, config.Prefix.Length).Equals(config.Prefix))
             {

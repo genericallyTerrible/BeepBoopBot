@@ -3,6 +3,7 @@ using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BeepBoopBot
@@ -10,6 +11,8 @@ namespace BeepBoopBot
     public class BeepBoopBot
     {
         public static string ClassName { get; private set; } = typeof(BeepBoopBot).Name;
+
+        public static List<SocketTextChannel> UpdateChannels { get; set; } = new List<SocketTextChannel>();
 
         public static CommandHandler CommandHandler { get; private set; }
         public static CommandService CommandService { get; private set; }

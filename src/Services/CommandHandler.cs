@@ -45,17 +45,17 @@ namespace BeepBoopBot.Services
                 try
                 {
                     IResult result = await CommandService.ExecuteAsync(context, argPos);
-                    if (!result.IsSuccess)                                // If execution failed, reply with the error message.
+                    if (!result.IsSuccess)                            // If execution failed, reply with the error message.
                     {
                         await context.Channel.SendMessageAsync($"Oops, I hit a snag: {result.ErrorReason}");
                         await LogError(msg, result);
                     }
-                    else
+                    else                                              // Executed successfully.
                     {
                         await LogSuccess(msg);
                     }
                 }
-                catch (Exception e)
+                catch (Exception e)                                   // An unexpected error occurred.
                 {
                     await context.Channel.SendMessageAsync($"Uh oh, something went wrong. . .\n{e.ToString()}");
                     await LogException(msg, e);

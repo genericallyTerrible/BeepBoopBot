@@ -1,8 +1,11 @@
 ﻿using BeepBoopBot.Attributes;
+using BeepBoopBot.Extensions;
 using BeepBoopBot.Preconditions;
-using Discord.Rest;
+using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace BeepBoopBot.Modules
@@ -12,6 +15,68 @@ namespace BeepBoopBot.Modules
     public class Example : ModuleBase<ShardedCommandContext>
     {
 
+        [Command("modify embed color")]
+        [MinPermissions(BotAccessLevel.BotMaster)]
+        public async Task Testing
+        (
+            ulong messageId,
+            [Remainder] string hexColor
+        )
+        {
+            Configuration config = Configuration.Load();
+            Color newColor;
+            if (hexColor[0] == '#') //Trim hastags if necessary
+                hexColor = hexColor.Substring(1);
+
+            if (hexColor.ToLower().Equals("default"))
+            {
+                newColor = Configuration.DefaultEmbedColor;
+            }
+            else if (hexColor.Length < 7)
+            {
+                uint newVal = uint.Parse(hexColor, System.Globalization.NumberStyles.HexNumber);
+                if (newVal <= new Color(255, 255, 255).RawValue)
+                {
+                    newColor = new Color(newVal);
+                }
+                else
+                {
+                    throw new OverflowException();
+                }
+            }
+            else
+            {
+                throw new FormatException("Input string was not in a correct format.");
+            }
+
+            SocketUserMessage message = (SocketUserMessage)(await Context.Channel.GetMessageAsync(messageId));
+            if (message != null)
+            {
+                if (message.Embeds.Count > 0)
+                {
+                    IEmbed oldEmbed = message.Embeds.ToList()[0];
+                    EmbedBuilder newEmbed = oldEmbed.ToEmbedBuilder();
+                    if (newEmbed != null)
+                    {
+                        newEmbed.Color = newColor;
+                        await message.ModifyAsync(m => m.Embed = newEmbed.Build());
+                    }
+                    else
+                    {
+                        await ReplyAsync("I'm sorry, the message you specified had no modifiable embeds.");
+                    }
+                }
+                else
+                {
+                    await ReplyAsync("I'm sorry, the message you specified had no embeds.");
+                }
+            }
+            else
+            {
+                await ReplyAsync("I'm sorry, I couldn't find the message you were after.");
+            }
+        }
+        
         [BotCommand, Usage, Description, Aliases]
         [MinPermissions(ServerAccessLevel.ServerAdmin, BotAccessLevel.BotOwner, RequiredPreconditions.RequireAnyPrecondition)]
         public async Task Test()
@@ -48,7 +113,7 @@ namespace BeepBoopBot.Modules
             SocketSelfUser bot = Context.Client.CurrentUser;
             if (bot.Id != recipient.Id)
             {
-                RestDMChannel dm = await recipient.CreateDMChannelAsync();
+                IDMChannel dm = await recipient.GetOrCreateDMChannelAsync();
                 await dm.SendMessageAsync($"{sender.Mention} wanted me to say, \"{message}\"");
             }
             else
@@ -116,31 +181,6 @@ namespace BeepBoopBot.Modules
                 await self.ModifyAsync(x => x.Nickname = name);
 
                 await ReplyAsync($"I changed my name to **{name}**");
-            }
-
-            [Group("me"), Name("Me")]
-            [MinPermissions(BotAccessLevel.BotMaster)]
-            public class Me : ModuleBase
-            {
-                [Command("trash")]
-                [MinPermissions(BotAccessLevel.BotMaster)]
-                public async Task Trash()
-                {
-
-                    await ReplyAsync("I am trash");
-                }
-
-                [Group("total"), Name("Example")]
-                public class Example : ModuleBase
-                {
-                    [Command("trash")]
-                    [MinPermissions(BotAccessLevel.BotMaster)]
-                    public async Task Trash()
-                    {
-
-                        await ReplyAsync("I am trash");
-                    }
-                }
             }
         }
     }

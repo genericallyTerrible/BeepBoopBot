@@ -1,15 +1,17 @@
-﻿using BeepBoopBot.Preconditions;
+﻿using BeepBoopBot.Attributes;
+using BeepBoopBot.Preconditions;
 using Discord;
 using Discord.Commands;
-using Discord.WebSocket;
-using System.Threading.Tasks;
 using System;
-using BeepBoopBot.Attributes;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using Discord.WebSocket;
+using System.Linq;
 
 namespace BeepBoopBot.Modules
 {
     [BotModule("Maintenance")]
-    [MinPermissions(BotAccessLevel.BotOwner)]
+    [MinPermissions(BotAccessLevel.Owner)]
     public class Maintenance : ModuleBase<ShardedCommandContext>
     {
         [BotCommand, Usage, Description, Aliases]
@@ -49,6 +51,57 @@ namespace BeepBoopBot.Modules
             });
 
             await ReplyAsync("", false, settingsBuilder.Build());
+        }
+
+        [Command("servers")]
+        [RequireContext(ContextType.DM)]
+        public async Task Servers()
+        {
+            EmbedBuilder embed = new EmbedBuilder()
+            {
+                Color = Configuration.Load().EmbedColor,
+                Description = "Here's a list of servers I'm connected to."
+            };
+
+            List<SocketGuild> guilds = new List<SocketGuild>(BeepBoopBot.Client.Guilds);
+            foreach (SocketGuild guild in guilds)
+            {
+                EmbedFieldBuilder guildEmbed = new EmbedFieldBuilder()
+                {
+                    Name = guild.Name,
+                    Value = $"ID: {guild.Id}"
+                };
+                embed.AddField(guildEmbed);
+            }
+
+            if(embed.Fields.Count > 0)
+            {
+                await ReplyAsync("", embed: embed);
+            }
+            else
+            {
+                await ReplyAsync("I'm currently not connected to any servers.");
+            }
+        }
+
+        [Command("leave")]
+        [RequireContext(ContextType.DM)]
+        [MinPermissions(BotAccessLevel.BotMaster)]
+        public async Task Leave(ulong guildId)
+        {
+            List<SocketGuild> guilds = new List<SocketGuild>(BeepBoopBot.Client.Guilds);
+            int index = guilds.FindIndex(g => g.Id == guildId);
+            if(index >= 0)
+            {
+                // Guild was found in the list.
+                await guilds[index].LeaveAsync();
+                await ReplyAsync($"I have successfully left {guilds[index].Name}");
+            }
+            else
+            {
+                // Guild was not found in the list.
+                await ReplyAsync("I'm sorry, I am not currently connected to any guild with that Id");
+            }
         }
 
         //[Command("die")]
@@ -126,6 +179,7 @@ namespace BeepBoopBot.Modules
             }
 
         }
+
         [Group("modify"), Name("Maintenance")]
         public class Modify : ModuleBase
         {
