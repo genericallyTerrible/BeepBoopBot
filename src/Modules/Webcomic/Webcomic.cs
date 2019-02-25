@@ -63,6 +63,6 @@ namespace BeepBoopBot.Modules.Webcomic
 
     public class Updating
     {
-
+        //public Author
     }
 }

@@ -101,7 +101,7 @@ namespace BeepBoopBot.Preconditions
             }
             else if (config.Owners.Contains(c.User.Id)) // Give configured owners special access.
             {
-                return BotAccessLevel.Owner;
+                return BotAccessLevel.BotOwner;
             }
             else
             {

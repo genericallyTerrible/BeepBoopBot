@@ -11,7 +11,7 @@ using System.Linq;
 namespace BeepBoopBot.Modules
 {
     [BotModule("Maintenance")]
-    [MinPermissions(BotAccessLevel.Owner)]
+    [MinPermissions(BotAccessLevel.BotOwner)]
     public class Maintenance : ModuleBase<ShardedCommandContext>
     {
         [BotCommand, Usage, Description, Aliases]
